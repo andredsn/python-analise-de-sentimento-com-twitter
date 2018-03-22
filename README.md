@@ -1,6 +1,6 @@
 "# python-analise-de-sentimento-com-twitter" 
 
-A base desse projeto é a utilização da inteligência artificial através da técnica de classificação, utilizando três algoritmos: decision tree, SVM e MultinomialNB para a análise de sentimento dos usuário sobre a segurança pública no Brasil.
+A base desse projeto é a utilização da inteligência artificial através da técnica de classificação, utilizando três algoritmos: decision tree, SVM e Naive Bayes (utilizando a classe MultinomialNB) o para a análise de sentimento dos usuário sobre a segurança pública no Brasil.
 
 A cada novo tweet classificado, a página no browser exibe o percentual e total de cada classe. Os tr~es algoritmos classificam um tweet, mas o tweet é inserido em apenas uma classe. Por isso, é verificado o resultado de cada algoritmo e a a classificação de maior quantidade é a classificação válida. Por exemplo: se os algoritmos classificarem um texto do tweet respectivamente como: neutro, neutro, inseguro. Prevalecerá a classificação neutro.
 
