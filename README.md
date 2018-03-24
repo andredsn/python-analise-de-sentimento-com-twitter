@@ -1,19 +1,19 @@
 "# python-analise-de-sentimento-com-twitter" 
+# coding UTF-8
 
-A base desse projeto È a utilizaÁ„o da inteligÍncia artificial atravÈs da tÈcnica de classificaÁ„o, utilizando trÍs algoritmos: decision tree, SVM e Naive Bayes (utilizando a classe MultinomialNB) o para a an·lise de sentimento dos usu·rio sobre a seguranÁa p˙blica no Brasil.
+A base desse projeto √© a utiliza√ß√£o da intelig√™ncia artificial atrav√©s da t√©cnica de classifica√ß√£o, utilizando tr√™s algoritmos: decision tree, SVM e Naive Bayes (utilizando a classe MultinomialNB) para a an√°lise de sentimento dos usu√°rio sobre a seguran√ßa p√∫blica no Brasil.
 
-A cada novo tweet classificado, a p·gina no browser exibe o percentual e total de cada classe. Os tr~es algoritmos classificam um tweet, mas o tweet È inserido em apenas uma classe. Por isso, È verificado o resultado de cada algoritmo e a a classificaÁ„o de maior quantidade È a classificaÁ„o v·lida. Por exemplo: se os algoritmos classificarem um texto do tweet respectivamente como: neutro, neutro, inseguro. Prevalecer· a classificaÁ„o neutro.
+A cada novo tweet classificado, a p√°gina no browser exibe o percentual e total de cada classe. Os tr√™s algoritmos classificam um tweet, mas o tweet √© inserido em apenas uma classe. Por isso, √© verificado o resultado de cada algoritmo e a classifica√ß√£o de maior quantidade √© a classifica√ß√£o v√°lida. Por exemplo: se os algoritmos classificarem um texto do tweet respectivamente como: neutro, neutro, inseguro. Prevalecer√° a classifica√ß√£o neutro.
 
-Para usar a api do twitter, È necess·rio ter uma conta e criar um app na prÛpria rede social, o qual contÈm as credenciais que permitem acessar os dados.
+Para usar a api do twitter, √© necess√°rio ter uma conta e criar um app na pr√≥pria rede social, o qual cont√©m as credenciais que permitem acessar os dados.
 
-Os pacotes necess·rios est„o no arquivo require.txt, nos qual  os principais pacots s„o: python 3.6, Django 1.11.7 e Anaconda3-4.4.0-Windows-x86_64
+Os pacotes necess√°rios est√£o no arquivo require.txt, no qual  os principais pacots s√£o: python 3.6, Django 1.11.7 e Anaconda3-4.4.0-Windows-x86_64
 
-Django È um framework web python.
+Django √© um framework web python.
 
-AtenÁ„o: o anaconda j· tr·s o prÛprio python instalado. Portanto, deve-se instalar apenas o anaconda e depois instalar o require.txt.
+Aten√ß√£o: o anaconda j√° traz o pr√≥prio python instalado. Portanto, deve-se instalar apenas o anaconda e depois instalar o require.txt.
 Pegue o anaconda 3-4-4.0 no link:
 https://repo.continuum.io/archive/Anaconda3-4.4.0-Windows-x86_64.exe
 
 Para instalar os pacotes do arquivo texto referido, execute no prompt ou terminal: pip install -r require.txt
-N„o esqueÁa de apontar o caminho absoluto do require.txt.
-unicodedata 
+N√£o esque√ßa de apontar o caminho absoluto do require.txt caso voc√™ n√£o esteja na mesma p√°gina do require.txt.
