@@ -353,6 +353,6 @@ def escolherMelhorClassificacao(c1, c2, c3):
     return classe
 
 #define o tempo para fazer nova busca
-#time.sleep(30)
-#while (True):
-main()
+time.sleep(30)
+while (True):
+    main()
