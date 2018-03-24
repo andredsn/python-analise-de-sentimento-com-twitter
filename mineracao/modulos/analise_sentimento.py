@@ -1,53 +1,24 @@
 ﻿# coding=UTF-8
-import io
 import os
 import re
 import time
-import sys
 from unicodedata import normalize
-
-import bokeh
-from bokeh.charts import Bar, output_notebook, show
-from bokeh.charts import Scatter, output_file, show
-from bokeh.plotting import figure, output_file, show
-from nltk import FreqDist
-from nltk import tokenize
 import nltk
-from nltk.corpus import sentiwordnet as swn
-from nltk.corpus import stopwords
-from nltk.corpus import wordnet
-from nltk.probability import FreqDist
-from nltk.stem.snowball import SnowballStemmer
-from sklearn import metrics
 from sklearn import svm
 from sklearn import tree
-import sklearn
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import cross_val_predict
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
 from sklearn.naive_bayes import MultinomialNB
-from textblob import TextBlob
-from textblob.classifiers import NaiveBayesClassifier
 from twython import Twython
-
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import random as rn
-import seaborn as sea
 
 conexao=None
 
 def main():
     #palavras chaves para buscar no twitter
-    palavras_chaves=["violência", "futebol"]
+    palavras_chaves=["violência, assédio, segurança"]
+    
     #caminho da pasta com o arquivo
-    pasta="c:/users/usuario/dados"
+    pasta="C:\workspace\python-analise-de-sentimento-com-twitter"
     alterarPasta(pasta)
 
     #variável com id do ultimo twitter
@@ -64,7 +35,7 @@ def main():
     
     #ler a base de tweets classificados
     df=lerCSV(nomeArquivo)
-    
+
     #faz a conexão com o twitter
     globals()[conexao]=conectarTwitter()
     
@@ -82,7 +53,7 @@ def main():
         
         #cria um dataframe com o novo tweet ainda não classificado
         dataframe =criarDF(tweet)
-    
+
         #trata o texto do tweet
         texto=etl(dataframe['texto'])
         
@@ -107,7 +78,7 @@ def main():
         dfNovo=adicionarItem(df, dataframe)
         
         #cria e subscreve a base de tweets classificados com o novo texto também classificado
-        criarArquivo(dfNovo, "tweets_classificados")
+        #criarArquivo(dfNovo, "tweets_classificados1")
 
 def alterarPasta(pasta):
     os.chdir(pasta)
@@ -116,7 +87,7 @@ def lerCSV(nomeArquivo):
     return pd.read_csv(nomeArquivo, encoding='ISO-8859-1', sep=";", header=0)
 
 def removerPontuacao(texto):
-    return re.sub(u'[^a-zA-Z0-9������������������������ ]', ' ', texto)
+    return re.sub(u'[^a-zA-Z0-9áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛàèìòùÀÈÌÒÙãõ]+', ' ', texto)
 
 def removerStopWord(texto):
     stopWord=nltk.corpus.stopwords.words('portuguese')
@@ -160,7 +131,6 @@ def removerMensionamento(texto):
 def etl(textos):
     
     tweets=[]
-    # pega apenas os valores do dataframe
    
  #trata o texto de cada linha do dataframe
     for texto in textos:
@@ -172,14 +142,14 @@ def etl(textos):
         #remove URL
         texto=removerURL(texto)
         
-        #transforma a frase toda em min�scula
+        #transforma a frase toda em minúscula
         texto=transformarEmMinusculas(texto)
-        
-        #remove números
-        texto=removerNumeros(texto)
         
         #remove as pontuações
         texto=removerPontuacao(texto)
+        
+        #remove números
+        texto=removerNumeros(texto)
         
         #retirar assentos
         texto=removerAssentuacao(texto)
@@ -295,14 +265,15 @@ def criarVetor1Palavra():
     return CountVectorizer(analyzer="word")
     
 def criarVetor2Palavras():
-        # a linha abaixo tr�z o vetor de 2 em 2 palavras. Obs, o resultado desta foi melhor
+        # a linha abaixo traz o vetor de 2 em 2 palavras. Obs, o resultado desta foi melhor
     return CountVectorizer(ngram_range=(1,2))
 
 def conectarTwitter():
-    consumer_key = ''
-    consumer_secret = ''
-    access_token = ''
-    access_token_secret = ''
+    consumer_key = '2mDuJh76ceIXYQ76BnrQ2YC2Y'
+    consumer_secret = 'yuSnuZoGDmj0DvTDuia6vz992jhfATnJ8OQ6UMbNXBuLK1wknS'
+    access_token = '901839813392945152-2euiWPzJJB1SBjULYzA4b6p8D3OsvRA'
+    access_token_secret = 'ZRbjml2L2J8KSRavCFGcycTgBfx5nPOpNktv3JCKSFOzL'
+
     conectado= Twython(consumer_key, consumer_secret, access_token, access_token_secret)
     return conectado
 
@@ -312,7 +283,7 @@ def buscar(id, quantidade, palavras_chaves):
 
 def adicionarNaLista(tweetsEncontrados):
     tweets=[]
-    for tweetEncontrado in tweetsEncontrados["statuses"]:
+    for tweetEncontrado in tweetsEncontrados['statuses']:
         tweet={'id': tweetEncontrado['id'], 'usuário': tweetEncontrado['user']['name'], 'texto': tweetEncontrado['text']}
         tweets.append(tweet)
         return tweets
@@ -379,10 +350,9 @@ def escolherMelhorClassificacao(c1, c2, c3):
     #escolhe a classe repetida
         classe=dfClasse["classe"].loc[dfClasse["quantidade"]>1].values
         
-    print(seguro, inseguro, neutro)
     return classe
 
 #define o tempo para fazer nova busca
-time.sleep(30)
-while (True):
-    main()
+#time.sleep(30)
+#while (True):
+main()
