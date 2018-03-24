@@ -269,10 +269,10 @@ def criarVetor2Palavras():
     return CountVectorizer(ngram_range=(1,2))
 
 def conectarTwitter():
-    consumer_key = '2mDuJh76ceIXYQ76BnrQ2YC2Y'
-    consumer_secret = 'yuSnuZoGDmj0DvTDuia6vz992jhfATnJ8OQ6UMbNXBuLK1wknS'
-    access_token = '901839813392945152-2euiWPzJJB1SBjULYzA4b6p8D3OsvRA'
-    access_token_secret = 'ZRbjml2L2J8KSRavCFGcycTgBfx5nPOpNktv3JCKSFOzL'
+    consumer_key = ""
+    consumer_secret = ""
+    access_token = ""
+    access_token_secret = ""
 
     conectado= Twython(consumer_key, consumer_secret, access_token, access_token_secret)
     return conectado
