@@ -5,4 +5,3 @@ scikit-image==0.13.0
 scikit-learn==0.18.1
 textblob==0.15.1
 twython==3.6.0
-unicodedata2==10.0.0.post2
