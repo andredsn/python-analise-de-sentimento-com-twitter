@@ -17,7 +17,9 @@ https://repo.continuum.io/archive/Anaconda3-4.4.0-Windows-x86_64.exe
 
 Para instalar os pacotes do arquivo texto referido, execute no prompt ou terminal: pip install -r require.txt
 Não esqueça de apontar o caminho absoluto do require.txt caso você não esteja na mesma página do require.txt.
-Após a instalação do readme.md, execute no console python:
+Após a instalação do require.txt, execute no console python:
 import nltk
 nltk.download()
-na janela de download dos plugins do nltk, escolha all para evitar problemas com módulos não encontrados.
+Quando abrir a janela de download dos plugins do nltk, escolha all para evitar problemas com módulos não encontrados.
+
+Utilize o terminal ou prompt para ir para a raiz do projeto (python-analise-de-sentimento-com-twitter). Digite: python manage.py para iniciar o servidor com a página django. No browser, digite: localhost:8000
