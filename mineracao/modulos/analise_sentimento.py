@@ -19,13 +19,14 @@ def main():
     
     #caminho da pasta com o arquivo
     pasta="C:\workspace\python-analise-de-sentimento-com-twitter"
+    
     alterarPasta(pasta)
 
-    #variável com id do ultimo twitter
+    #variável com id do ultimo twitter (obs pode ser qualquer valor, mas o mesmo será sobescrito após cada busca de tweets).
     id=930943609800679426
     
     #base de tweets classificados
-    nomeArquivo="tweets_classificados.csv"
+    nomeArquivo="tweets_classificados"
     
     #quantidade de tweet para buscar
     quantidade=1
@@ -63,28 +64,28 @@ def main():
         #trata os textos
         dft['texto']=etl(dft['texto'])
         
-        #classificar nova instância de tweet
+        #classificar nova instância de tweet com três algoritmos
         c1=classificarDecisionTree(dft['texto'], dft['sentimento'], texto)
         c2=classificarSVM(dft['texto'], dft['sentimento'], texto)
         c3=classificarMultinomialNB(dft['texto'], dft['sentimento'], texto)
         
-        #escolhe as duas melhores classificações
+        #escolhe a melhor de três classificações
         classificacao=escolherMelhorClassificacao(c1, c2, c3)
         
         #preenche a coluna sentimento do dataframe criado com a classificação encontrada
         dataframe['sentimento']=classificacao
         
-        #concatena o dataframe criado já classificado com o outro dataframe classificado
+        #concatena o dataframe do arquivo de treino com o novo dataframe classificado
         dfNovo=adicionarItem(df, dataframe)
         
-        #cria e subscreve a base de tweets classificados com o novo texto também classificado
-        #criarArquivo(dfNovo, "tweets_classificados1")
+        #cria e sobrescreve a base de tweets classificados com o novo texto também classificado
+        criarArquivo(dfNovo, nomeArquivo)
 
 def alterarPasta(pasta):
     os.chdir(pasta)
 
 def lerCSV(nomeArquivo):
-    return pd.read_csv(nomeArquivo, encoding='ISO-8859-1', sep=";", header=0)
+    return pd.read_csv(nomeArquivo+".csv", encoding='ISO-8859-1', sep=";", header=0)
 
 def removerPontuacao(texto):
     return re.sub(u'[^a-zA-Z0-9áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛàèìòùÀÈÌÒÙãõ]+', ' ', texto)
