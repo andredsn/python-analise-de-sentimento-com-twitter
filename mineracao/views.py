@@ -5,7 +5,7 @@ from mineracao.modulos.analise_sentimento import alterarPasta, lerCSV, calcularP
 def index(request):
     pasta="c:/users/usuario/dados"
     alterarPasta(pasta)
-    df=lerCSV("tweets_classificados.csv")
+    df=lerCSV("tweets_classificados")
     percentuais=calcularPercentualTotal(df)
     total=df.shape
     return render(request, 'mineracao/index.html', {"total": total[0], "seguro": percentuais[0], "inseguro": percentuais[1], "neutro": percentuais[2]})
