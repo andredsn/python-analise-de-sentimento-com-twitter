@@ -14,7 +14,6 @@ from twython import Twython
 import pandas as pd
 import random as rn
 
-
 conexao=None
 dfNovo=None
 
@@ -180,14 +179,14 @@ def etl(textos):
     return tweets
 
 def calcularPercentualTotal(df):
-    numero_seguros = len(df.loc[df['sentimento'] == 'seguro'])
+    numero_seguros = len(df.loc[df['sentimento'] == "seguro"])
     numero_inseguros= len(df.loc[df['sentimento'] == 'inseguro'])
     numero_neutros = len(df.loc[df['sentimento'] == 'neutro'])
     
     percentuais=[]
    
-    percentuais.append("({:2.2f}%)".format(numero_seguros/(numero_inseguros+numero_seguros+numero_neutros)*100))
-    percentuais.append("{:2.2f}%)".format(numero_inseguros/(numero_inseguros+numero_seguros+numero_neutros)*100))
+    percentuais.append("{:2.2f}%".format(numero_seguros/(numero_inseguros+numero_seguros+numero_neutros)*100))
+    percentuais.append("{:2.2f}%".format(numero_inseguros/(numero_inseguros+numero_seguros+numero_neutros)*100))
     
     percentuais.append("{:2.2f}%".format(numero_neutros/(numero_inseguros+numero_seguros+numero_neutros)*100))
     return percentuais
@@ -366,7 +365,6 @@ def escolherMelhorClassificacao(c1, c2, c3):
         classe=dfClasse["classe"].loc[dfClasse["quantidade"]>1].values
         
     return classe
-
 
 # função para pegar o dataframe criado depois da classificação do tweet encontrado
 def getDataFrame():
