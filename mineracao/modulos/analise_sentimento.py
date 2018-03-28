@@ -1,5 +1,4 @@
 ﻿# coding=UTF-8
-import random as rn
 import os
 import re
 import time
@@ -13,6 +12,7 @@ from sklearn.naive_bayes import MultinomialNB
 from twython import Twython
 
 import pandas as pd
+import random as rn
 
 
 conexao=None
@@ -283,16 +283,17 @@ def criarVetor2Palavras():
     return CountVectorizer(ngram_range=(1,2))
 
 def conectarTwitter():
-    consumer_key = ""
-    consumer_secret = ""
-    access_token = ""
-    access_token_secret = ""
-
+    consumer_key = '2mDuJh76ceIXYQ76BnrQ2YC2Y'
+    consumer_secret = 'yuSnuZoGDmj0DvTDuia6vz992jhfATnJ8OQ6UMbNXBuLK1wknS'
+    access_token = '901839813392945152-2euiWPzJJB1SBjULYzA4b6p8D3OsvRA'
+    access_token_secret = 'ZRbjml2L2J8KSRavCFGcycTgBfx5nPOpNktv3JCKSFOzL'
+    
     conectado= Twython(consumer_key, consumer_secret, access_token, access_token_secret)
     return conectado
 
 def buscar(id, quantidade, palavras_chaves):
-    resultado = globals()[conexao].search(q=palavras_chaves, since_id=id, result_type='recent', locale='Brasil', lang='pt', count=1)
+    global conexao
+    resultado = conexao.search(q=palavras_chaves, since_id=id, result_type='recent', locale='Brasil', lang='pt', count=1)
     return resultado
 
 def adicionarNaLista(tweetsEncontrados):
@@ -381,3 +382,5 @@ def escolherPalavraDalista(palavrasChaves):
     
     # retorna a palavra escolhida da lista
     return palavrasChaves[posicao]
+
+main()
