@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta  http-equiv="refresh" content="20">
-<title>UCSAL - PROJETO INTEGRADOR 2017.2</title>
+<center><title>UCSAL - PROJETO INTEGRADOR 2017.2</title></center>
 </head>
 <body>
 
+<br><br>
 <ul>
 <li>UNIVERSIDADE CATÓLICA DO SALVADOR</li>
+<li>Curso: análise e desenvolvimento de sistemas</li>
 <li>Disciplina Projeto Integrador 2017.2</li>
 </ul>
-<br><br>
+<br>
 
 <h1><strong>ESTATÍSTICA DE TWEETS</strong></h1>
-
-<br><br>
 
 <br>
 
@@ -24,18 +24,37 @@
 <caption>ANÁLISE DE SENTIMENTO</caption>
 
 <tr>
-<th>TOTAL DE TWEETS</th>
-<th>SEGUROS</th>
-<th>INSEGUROS</th>
-<th>NEUTROS</th>
+<td>Total de tweets classificados: {{total}}</td>
+</tr>
+<br>
+
+<th scope="col">CLASSIFICAÇÃO</th>
+<th scope="col">PERCENTUAL</th>
+<th scope="col" id="quantidade">QUANTIDADE</th>
 </tr>
 
 <tr>
-<td>{{total}}</td>
-<td>{{seguro}}</td>
-<td>{{inseguro}}</td>
-<td>{{neutro}}</td>
+<td>SEGURO</td>
+<td>{{percentualSeguros}}</td>
+<td>{{totalSeguros}}</td>
+</tr>
+
+<tr>
+<td>INSEGURO</td>
+<td>{{percentualInseguros}}</td>
+<td>{{totalInseguros}}</td>
+</tr>
+
+<tr>
+<td>NEUTRO</td>
+<td>{{percentualNeutros}}</td>
+<td>{{totalNeutros}}</td>
 </tr>
 </table>
+
+
 </body>
 </html>
+<br>
+
+<center><footer>ANDRÉ NASCIMENTO</footer></center>
