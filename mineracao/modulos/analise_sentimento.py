@@ -1,21 +1,34 @@
 ﻿# coding=UTF-8
+import random as rn
 import os
 import re
 import time
 from unicodedata import normalize
+
 import nltk
 from sklearn import svm
 from sklearn import tree
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from twython import Twython
+
 import pandas as pd
 
+
 conexao=None
+dfNovo=None
 
 def main():
+    
+    # pega as variáveis globais necessárias
+    global conexao
+    global dfNovo
+    
     #palavras chaves para buscar no twitter
-    palavras_chaves=["violência, assédio, segurança"]
+    palavrasChaves=["política", "político", "futebol", "assalto", "assassino", "ladrão", "violência", "mata", "medo", "crime", "notícia", "noticiário", "operação", "policial", "assédio", "pânico", "roubo", "copa", "famoso", "artista", "favela", "mundo", "brasil", "orientação", "homem", "mulher", "criança", "briga", "segurança", "insegurança", "país", "paz", "jesus", "Deus", "igreja", "remédio", "medicina", "médico", "tiroteio", "troca", "internet", "Trump", "estados unidos", "guerra", "time", "club", "curso", "casal", "jornal", "rádio", "cidade", "capital", "morte", "trânsito", "intervenção", "campeão", "brasileiro", "bonito", "feio", "lindo", "bonita", "linda", "feia", "magro", "gordo", "magra", "gorda", "presidente", "ex", "guarda", "prefeito", "municipal", "recurso", "ministério", "público", "eleição", "dinheiro", "feliz", "felicidade", "professor", "aluno", "estudante", "apeaça", "manhã", "tarde", "noite", "hoje", "música", "ruin", "jornal", "cego", "deficiente", "poder", "instituto"]
+    
+    # escolhe uma palavra da lista para buscar no twitter
+    palavra=escolherPalavraDalista(palavrasChaves)
     
     #caminho da pasta com o arquivo
     pasta="C:\workspace\python-analise-de-sentimento-com-twitter"
@@ -38,10 +51,10 @@ def main():
     df=lerCSV(nomeArquivo)
 
     #faz a conexão com o twitter
-    globals()[conexao]=conectarTwitter()
+    conexao=conectarTwitter()
     
     #faz a busca por tweet
-    tweetEncontrado=buscar(id, quantidade, palavras_chaves)
+    tweetEncontrado=buscar(id, quantidade, palavra)
     
     #ccontinua o processo de classificação se for encontrado tweet
     
@@ -79,7 +92,7 @@ def main():
         dfNovo=adicionarItem(df, dataframe)
         
         #cria e sobrescreve a base de tweets classificados com o novo texto também classificado
-        criarArquivo(dfNovo, nomeArquivo)
+        #criarArquivo(dfNovo, nomeArquivo)
 
 def alterarPasta(pasta):
     os.chdir(pasta)
@@ -132,8 +145,8 @@ def removerMensionamento(texto):
 def etl(textos):
     
     tweets=[]
-   
- #trata o texto de cada linha do dataframe
+    
+    #trata o texto de cada linha do dataframe
     for texto in textos:
         texto=str(texto)
         
@@ -353,7 +366,18 @@ def escolherMelhorClassificacao(c1, c2, c3):
         
     return classe
 
-#define o tempo para fazer nova busca
-time.sleep(30)
-while (True):
-    main()
+
+# função para pegar o dataframe criado depois da classificação do tweet encontrado
+def getDataFrame():
+    global dfNovo
+    return dfNovo
+
+def escolherPalavraDalista(palavrasChaves):
+    # escolhe um número aleatório do intervalo de 0 a tamanho da lista (n-1)
+    posicao=rn.sample(range(0, len(palavrasChaves)-1), 1)
+    
+    # faz um cast da variável posicao do tipo lista para int
+    posicao=int(posicao[0])
+    
+    # retorna a palavra escolhida da lista
+    return palavrasChaves[posicao]
