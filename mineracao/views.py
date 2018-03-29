@@ -1,11 +1,10 @@
-from django.http import HttpResponse
 from django.shortcuts import render
-from mineracao.modulos.analise_sentimento import alterarPasta, lerCSV, calcularPercentualTotal
+from mineracao.modulos.analise_sentimento import getDataFrame, calcularPercentualTotal,\
+    calcularClasses
 
 def index(request):
-    pasta="c:/users/usuario/dados"
-    alterarPasta(pasta)
-    df=lerCSV("tweets_classificados")
+    df =getDataFrame()
     percentuais=calcularPercentualTotal(df)
-    total=df.shape
-    return render(request, 'mineracao/index.html', {"total": total[0], "seguro": percentuais[0], "inseguro": percentuais[1], "neutro": percentuais[2]})
+    totais=calcularClasses(df)
+    total=len(df)
+    return render(request, 'mineracao/index.html', {"total": total, "percentualSeguros": percentuais[0], "percentualInseguros": percentuais[1], "percentualNeutros": percentuais[2], "totalSeguros": totais[0], "totalInseguros": totais[1], "totalNeutros": totais[2]})
