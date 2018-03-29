@@ -197,9 +197,9 @@ def calcularClasses(df):
     numero_neutros = len(df.loc[df['sentimento'] == 'neutro'])
     
     quantidade=[]
-    quantidade.append("seguros: {}".format(numero_seguros))
-    quantidade.append("inseguros: {}".format(numero_inseguros))
-    quantidade.append("neutros: {}".format(numero_neutros))
+    quantidade.append("{}".format(numero_seguros))
+    quantidade.append("{}".format(numero_inseguros))
+    quantidade.append("{}".format(numero_neutros))
     
     return quantidade
 
@@ -381,4 +381,3 @@ def escolherPalavraDalista(palavrasChaves):
     # retorna a palavra escolhida da lista
     return palavrasChaves[posicao]
 
-main()
