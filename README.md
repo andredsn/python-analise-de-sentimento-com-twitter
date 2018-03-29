@@ -1,4 +1,4 @@
-﻿# coding = UTF-8
+# coding = UTF-8
 
 Esse projeto faz análise de sentimento de tweets sobre segurança pública no Brasil utilizando framework python django através da técnica de classificação.
 O django é um framework para desenvolvimento de aplicações web para a linguagem python.
@@ -24,7 +24,7 @@ nltk.download()
 Quando abrir a janela de download dos plugins do nltk, escolha all para evitar problemas com módulos não encontrados.
 
 Utilize o terminal ou prompt para ir para a raiz do projeto (python-analise-de-sentimento-com-twitter). Digite:
-python manage.py
-No browser, digite: localhost:8000
+python manage.py runserver e tecle enter.
+No browser, digite: localhost:8000/mineracao
 
 A cada 20 segundo, um tweet é buscado, classificado e a página é renderizada novamente.
