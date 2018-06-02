@@ -7,9 +7,11 @@ from sklearn import svm
 from sklearn import tree
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
 from twython import Twython
 import pandas as pd
 import random as rn
+from sklearn.ensemble import RandomForestClassifier
 
 conexao=None
 dfNovo=None
@@ -21,7 +23,7 @@ def main():
     global dfNovo
     
     #palavras chaves para buscar no twitter
-    palavrasChaves=["política", "político", "futebol", "assalto", "assassino", "ladrão", "violência", "mata", "medo", "crime", "notícia", "noticiário", "operação", "policial", "assédio", "pânico", "roubo", "copa", "famoso", "artista", "favela", "mundo", "brasil", "orientação", "homem", "mulher", "criança", "briga", "segurança", "insegurança", "país", "paz", "jesus", "Deus", "igreja", "remédio", "medicina", "médico", "tiroteio", "troca", "internet", "Trump", "estados unidos", "guerra", "time", "club", "curso", "casal", "jornal", "rádio", "cidade", "capital", "morte", "trânsito", "intervenção", "campeão", "brasileiro", "bonito", "feio", "lindo", "bonita", "linda", "feia", "magro", "gordo", "magra", "gorda", "presidente", "ex", "guarda", "prefeito", "municipal", "recurso", "ministério", "público", "eleição", "dinheiro", "feliz", "felicidade", "professor", "aluno", "estudante", "apeaça", "manhã", "tarde", "noite", "hoje", "música", "ruin", "jornal", "cego", "deficiente", "poder", "instituto"]
+    palavrasChaves=["política", "político", "futebol", "assalto", "assassino", "ladrão", "violência", "mata", "medo", "crime", "notícia", "noticiário", "operação", "policial", "assédio", "pânico", "roubo", "copa", "famoso", "artista", "favela", "mundo", "brasil", "orientação", "homem", "mulher", "criança", "briga", "segurança", "insegurança", "país", "paz", "jesus", "Deus", "igreja", "remédio", "medicina", "médico", "tiro", "troca", "internet", "Trump", "estados unidos", "guerra", "time", "club", "curso", "casal", "jornal", "rádio", "cidade", "capital", "morte", "trânsito", "intervenção", "campeão", "brasileiro", "bonito", "feio", "lindo", "bonita", "linda", "feia", "magro", "gordo", "magra", "gorda", "presidente", "ex", "guarda", "prefeito", "municipal", "recurso", "ministério", "público", "eleição", "dinheiro", "feliz", "felicidade", "professor", "aluno", "estudante", "apeaça", "manhã", "tarde", "noite", "hoje", "música", "ruin", "jornal", "cego", "deficiente", "poder", "instituto", "greve", "paraliza", "sindicato", "terror", "grupo", "revólver", "tráfico", "droga"]
     
     # escolhe uma palavra da lista para buscar no twitter
     palavra=escolherPalavraDalista(palavrasChaves)
@@ -77,9 +79,12 @@ def main():
         c1=classificarDecisionTree(dft['texto'], dft['sentimento'], texto)
         c2=classificarSVM(dft['texto'], dft['sentimento'], texto)
         c3=classificarMultinomialNB(dft['texto'], dft['sentimento'], texto)
+        c4 = classificarRandomForestClassifier(dft['texto'], dft['sentimento'], texto)
+        c5 = classificarLogisticRegression(dft['texto'], dft['sentimento'], texto)
         
+        print(dataframe['texto'])
         #escolhe a melhor de três classificações
-        classificacao=escolherMelhorClassificacao(c1, c2, c3)
+        classificacao=escolherMelhorClassificacao(c1, c2, c3, c4, c5)
         
         #preenche a coluna sentimento do dataframe criado com a classificação encontrada
         dataframe['sentimento']=classificacao
@@ -88,7 +93,7 @@ def main():
         dfNovo=adicionarItem(df, dataframe)
         
         #cria e sobrescreve a base de tweets classificados com o novo texto também classificado
-        criarArquivo(dfNovo, nomeArquivo)
+        #criarArquivo(dfNovo, nomeArquivo)
 
 def alterarPasta(pasta):
     os.chdir(pasta)
@@ -270,6 +275,53 @@ def classificarMultinomialNB(textos, sentimento, texto):
     
     return previsao
 
+def classificarRandomForestClassifier(textos, sentimento, texto):
+    
+    #classificação com floresta aleatória
+    
+    #cria um vetor de 1 palavra
+    vetor=criarVetor1Palavra()
+    
+    #pega a frequência das palavras
+    textos_freq=vetor.fit_transform(textos)
+    
+    #pega a frequência das palavras
+    texto_freq=vetor.transform(texto)
+    
+    #cria o modelo
+    modelo = RandomForestClassifier(random_state = 42)
+    
+    #treina o modelo passando a frequência de palavras de treino e o valor da coluna sentimento
+    modelo.fit(textos_freq, sentimento.ravel())
+    
+    #previsão do modelo
+    previsao= modelo.predict(texto_freq)
+    
+    return previsao
+
+def classificarLogisticRegression(textos, sentimento, texto):
+    #Regressão Logística
+    
+        #cria um vetor de 1 palavra
+    vetor = criarVetor1Palavra()
+    
+    #pega a frequência das palavras
+    textos_freq = vetor.fit_transform(textos)
+    
+    #cria o modelo
+    modelo=LogisticRegression()
+    
+    #treina o modelo passando a frequência de palavras de treino e o valor da coluna sentimento
+    modelo.fit(textos_freq, sentimento)
+    
+    #pega a frequência das palavras
+    texto_freq = vetor.transform(texto)
+    
+    #previsão do modelo
+    previsao= modelo.predict(texto_freq)
+    
+    return previsao
+
 def criarVetor1Palavra():
         #a linha abaixo traz o vetor de 1 palavra
     return CountVectorizer(analyzer="word")
@@ -279,10 +331,10 @@ def criarVetor2Palavras():
     return CountVectorizer(ngram_range=(1,2))
 
 def conectarTwitter():
-    consumer_key = ""
-    consumer_secret = ""
-    access_token = ""
-    access_token_secret = ""
+    consumer_key='2mDuJh76ceIXYQ76BnrQ2YC2Y'
+    consumer_secret = 'yuSnuZoGDmj0DvTDuia6vz992jhfATnJ8OQ6UMbNXBuLK1wknS'
+    access_token = '901839813392945152-2euiWPzJJB1SBjULYzA4b6p8D3OsvRA'
+    access_token_secret = 'ZRbjml2L2J8KSRavCFGcycTgBfx5nPOpNktv3JCKSFOzL'
     
     conectado= Twython(consumer_key, consumer_secret, access_token, access_token_secret)
     return conectado
@@ -310,15 +362,13 @@ def criarArquivo(df, nome):
     criado=df.to_csv(nome+'.csv', sep=";", index=False)
     return criado
 
-def escolherMelhorClassificacao(c1, c2, c3):
+def escolherMelhorClassificacao(c1, c2, c3, c4, c5):
     
-    #inicializa a classe vazia
-    classe=None
+    classe="neutro"
     
-    #inicializa os contadores da quantidade de classes
+    #inicializa os contadores da quantidade de classes para inseguros e seguros
     inseguro=0
     seguro=0
-    neutro=0
     
     if (c1=="inseguro"):
         inseguro=inseguro+1
@@ -326,17 +376,11 @@ def escolherMelhorClassificacao(c1, c2, c3):
     if (c1=="seguro"):
         seguro=seguro+1
         
-    if (c1=="neutro"):
-        neutro=neutro+1
-        
     if (c2=="inseguro"):
         inseguro=inseguro+1
         
     if (c2=="seguro"):
         seguro=seguro+1
-        
-    if (c2=="neutro"):
-        neutro=neutro+1
         
     if (c3=="inseguro"):
         inseguro=inseguro+1
@@ -344,23 +388,27 @@ def escolherMelhorClassificacao(c1, c2, c3):
     if (c3=="seguro"):
         seguro=seguro+1
         
-    if (c3=="neutro"):
-        neutro=neutro+1
+    if (c4=="inseguro"):
+        inseguro=inseguro+1
         
-    #se as classes forem diferentes, retorna neutro, já que não se sabe se é realmente seguro ou inseguro
-    if (seguro==1 & inseguro==1):
-        classe="neutro"
+    if (c4=="seguro"):
+        seguro=seguro+1
         
-    #se houver classificações com o mesmo valor
-    else:
+    if (c5=="inseguro"):
+        inseguro=inseguro+1
         
-        #cria um dataframe para pegar a maior repetição duma classificação
-        classes={"classe": ["seguro", "inseguro", "neutro"], "quantidade": [seguro, inseguro, neutro]}
-        dfClasse=pd.DataFrame(classes)
+    if (c5=="seguro"):
+        seguro=seguro+1
         
-    #escolhe a classe repetida
-        classe=dfClasse["classe"].loc[dfClasse["quantidade"]>1].values
+    if (inseguro>2):
+        classe="inseguro"
         
+    if (seguro>2):
+        classe="seguro"
+        
+    print(c1, c2, c3, c4, c5)
+        
+    print("classe: ", classe)
     return classe
 
 # função para pegar o dataframe criado depois da classificação do tweet encontrado
@@ -378,3 +426,4 @@ def escolherPalavraDalista(palavrasChaves):
     # retorna a palavra escolhida da lista
     return palavrasChaves[posicao]
 
+main()
