@@ -82,8 +82,7 @@ def main():
         c4 = classificarRandomForestClassifier(dft['texto'], dft['sentimento'], texto)
         c5 = classificarLogisticRegression(dft['texto'], dft['sentimento'], texto)
         
-        print(dataframe['texto'])
-        #escolhe a melhor de três classificações
+        #escolhe a melhor de 5 classificações
         classificacao=escolherMelhorClassificacao(c1, c2, c3, c4, c5)
         
         #preenche a coluna sentimento do dataframe criado com a classificação encontrada
@@ -331,11 +330,7 @@ def criarVetor2Palavras():
     return CountVectorizer(ngram_range=(1,2))
 
 def conectarTwitter():
-    consumer_key='2mDuJh76ceIXYQ76BnrQ2YC2Y'
-    consumer_secret = 'yuSnuZoGDmj0DvTDuia6vz992jhfATnJ8OQ6UMbNXBuLK1wknS'
-    access_token = '901839813392945152-2euiWPzJJB1SBjULYzA4b6p8D3OsvRA'
-    access_token_secret = 'ZRbjml2L2J8KSRavCFGcycTgBfx5nPOpNktv3JCKSFOzL'
-    
+
     conectado= Twython(consumer_key, consumer_secret, access_token, access_token_secret)
     return conectado
 
@@ -426,4 +421,3 @@ def escolherPalavraDalista(palavrasChaves):
     # retorna a palavra escolhida da lista
     return palavrasChaves[posicao]
 
-main()
