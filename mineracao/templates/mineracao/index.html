@@ -3,64 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta  http-equiv="refresh" content="20">
-<center><title>UCSAL - PROJETO INTEGRADOR 2017.2</title></center>
-</head>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    
+<script type="text/javascript">
+google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(drawChart);
+
+function drawChart() {
+
+var data = google.visualization.arrayToDataTable([['CLASSE', 'PERCENTUAL', 'QUANTIDADE'], ['SEGURO',{{percentualSeguros}},{{totalSeguros}}], ["INSEGURO", {{percentualInseguros}}, {{totalInseguros}}], ["NEUTRO", {{percentualNeutros}}, {{totalNeutros}}]]);
+
+var options = {
+title: {{total}} + ' TWEETS CLASSIFICADOS', hAxis: {title: 'MONITORAMENTO DE TWEETS SOBRE SEGURANÇA PÚBLICA NO BRASIL', titleTextStyle: {color: 'red'}}};
+
+var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+chart.draw(data, options);
+}
+    </script>
+  </head>
+  
 <body>
-
-<br><br>
-<ul>
-<li>UNIVERSIDADE CATÓLICA DO SALVADOR</li>
-<li>Curso: análise e desenvolvimento de sistemas</li>
-<li>Disciplina Projeto Integrador 2017.2</li>
-</ul>
-<br>
-
-<h1><strong>ESTATÍSTICA DE TWEETS</strong></h1>
-
-<br>
-
-<strong>
-Último tweet classificado:
-<br>
-{{texto}} ({{sentimento}})
-</strong>
+<strong>{{texto}} ({{sentimento}})</strong>
 <br><br>
 
-
-<table summary="Tabela com as informações da análise de sentimento">
-
-<caption>ANÁLISE DE SENTIMENTO</caption>
-
-<tr>
-<td>Total de tweets classificados: {{total}}</td>
-</tr>
-<br>
-
-<th scope="col">CLASSIFICAÇÃO</th>
-<th scope="col">PERCENTUAL</th>
-<th scope="col" id="quantidade">QUANTIDADE</th>
-</tr>
-
-<tr>
-<td>SEGURO</td>
-<td>{{percentualSeguros}}</td>
-<td>{{totalSeguros}}</td>
-</tr>
-
-<tr>
-<td>INSEGURO</td>
-<td>{{percentualInseguros}}</td>
-<td>{{totalInseguros}}</td>
-</tr>
-
-<tr>
-<td>NEUTRO</td>
-<td>{{percentualNeutros}}</td>
-<td>{{totalNeutros}}</td>
-</tr>
-</table>
-
-<br>
-<center><footer>ANDRÉ NASCIMENTO</footer></center>
+<div id="chart_div" style="width: 900px; height: 500px;"></div>
 </body>
 </html>
