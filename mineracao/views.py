@@ -14,3 +14,4 @@ def index(request):
     sentimento=df['sentimento'].tail(1).values
     
     return render(request, 'mineracao/index.html', {"total": total, "percentualSeguros": percentuais[0], "percentualInseguros": percentuais[1], "percentualNeutros": percentuais[2], "totalSeguros": totais[0], "totalInseguros": totais[1], "totalNeutros": totais[2], "texto": texto[0], "sentimento": sentimento[0]})
+
