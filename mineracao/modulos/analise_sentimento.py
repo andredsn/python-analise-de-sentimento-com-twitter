@@ -1,17 +1,20 @@
 ﻿# coding=UTF-8
-import os
+
 import re
 from unicodedata import normalize
+
 import nltk
 from sklearn import svm
 from sklearn import tree
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import MultinomialNB
 from twython import Twython
+
 import pandas as pd
 import random as rn
-from sklearn.ensemble import RandomForestClassifier
+
 
 conexao=None
 dfNovo=None
@@ -28,22 +31,8 @@ def main():
     # escolhe uma palavra da lista para buscar no twitter
     palavra=escolherPalavraDalista(palavrasChaves)
     
-    #caminho da pasta com o arquivo
-    pasta="C:\workspace\python-analise-de-sentimento-com-twitter"
-    
-    alterarPasta(pasta)
-
-    #variável com id do ultimo twitter (obs pode ser qualquer valor, mas o mesmo será sobescrito após cada busca de tweets).
-    id=930943609800679426
-    
     #base de tweets classificados
     nomeArquivo="tweets_classificados"
-    
-    #quantidade de tweet para buscar
-    quantidade=1
-    
-    #data do inícil da busca
-    desde='2014-01-01'
     
     #ler a base de tweets classificados
     df=lerCSV(nomeArquivo)
@@ -52,16 +41,14 @@ def main():
     conexao=conectarTwitter()
     
     #faz a busca por tweet
-    tweetEncontrado=buscar(id, quantidade, palavra)
+    tweetEncontrado=buscar(palavra)
     
     #ccontinua o processo de classificação se for encontrado tweet
     
     if (tweetEncontrado):
+        
         #percorre o json de tweet encontrado para pegar usuário, texto e id
         tweet=adicionarNaLista(tweetEncontrado)
-        
-        #pega o id do tweet
-        id=tweet[0]['id']
         
         #cria um dataframe com o novo tweet ainda não classificado
         dataframe =criarDF(tweet)
@@ -90,12 +77,8 @@ def main():
         
         #concatena o dataframe do arquivo de treino com o novo dataframe classificado
         dfNovo=adicionarItem(df, dataframe)
-        
         #cria e sobrescreve a base de tweets classificados com o novo texto também classificado
-        #criarArquivo(dfNovo, nomeArquivo)
-
-def alterarPasta(pasta):
-    os.chdir(pasta)
+        criarArquivo(dfNovo, nomeArquivo)
 
 def lerCSV(nomeArquivo):
     return pd.read_csv(nomeArquivo+".csv", encoding='ISO-8859-1', sep=";", header=0)
@@ -186,10 +169,10 @@ def calcularPercentualTotal(df):
     
     percentuais=[]
    
-    percentuais.append("{:2.2f}%".format(numero_seguros/(numero_inseguros+numero_seguros+numero_neutros)*100))
-    percentuais.append("{:2.2f}%".format(numero_inseguros/(numero_inseguros+numero_seguros+numero_neutros)*100))
+    percentuais.append("{:2.2f}".format(numero_seguros/(numero_inseguros+numero_seguros+numero_neutros)*100))
+    percentuais.append("{:2.2f}".format(numero_inseguros/(numero_inseguros+numero_seguros+numero_neutros)*100))
     
-    percentuais.append("{:2.2f}%".format(numero_neutros/(numero_inseguros+numero_seguros+numero_neutros)*100))
+    percentuais.append("{:2.2f}".format(numero_neutros/(numero_inseguros+numero_seguros+numero_neutros)*100))
     return percentuais
 
 def calcularClasses(df):
@@ -325,18 +308,18 @@ def criarVetor1Palavra():
         #a linha abaixo traz o vetor de 1 palavra
     return CountVectorizer(analyzer="word")
     
-def criarVetor2Palavras():
-        # a linha abaixo traz o vetor de 2 em 2 palavras. Obs, o resultado desta foi melhor
-    return CountVectorizer(ngram_range=(1,2))
-
 def conectarTwitter():
-
+    consumer_key='2mDuJh76ceIXYQ76BnrQ2YC2Y'
+    consumer_secret = 'yuSnuZoGDmj0DvTDuia6vz992jhfATnJ8OQ6UMbNXBuLK1wknS'
+    access_token = '901839813392945152-2euiWPzJJB1SBjULYzA4b6p8D3OsvRA'
+    access_token_secret = 'ZRbjml2L2J8KSRavCFGcycTgBfx5nPOpNktv3JCKSFOzL'
+    
     conectado= Twython(consumer_key, consumer_secret, access_token, access_token_secret)
     return conectado
 
-def buscar(id, quantidade, palavras_chaves):
+def buscar(palavras_chaves):
     global conexao
-    resultado = conexao.search(q=palavras_chaves, since_id=id, result_type='recent', locale='Brasil', lang='pt', count=1)
+    resultado = conexao.search(q=palavras_chaves, result_type='recent', locale='Brasil', lang='pt', count=1)
     return resultado
 
 def adicionarNaLista(tweetsEncontrados):
@@ -401,9 +384,6 @@ def escolherMelhorClassificacao(c1, c2, c3, c4, c5):
     if (seguro>2):
         classe="seguro"
         
-    print(c1, c2, c3, c4, c5)
-        
-    print("classe: ", classe)
     return classe
 
 # função para pegar o dataframe criado depois da classificação do tweet encontrado
