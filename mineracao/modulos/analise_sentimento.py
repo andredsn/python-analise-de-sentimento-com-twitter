@@ -26,7 +26,7 @@ def main():
     global dfNovo
     
     #palavras chaves para buscar no twitter
-    palavrasChaves=["política", "político", "futebol", "assalto", "assassino", "ladrão", "violência", "mata", "medo", "crime", "notícia", "noticiário", "operação", "policial", "assédio", "pânico", "roubo", "copa", "famoso", "artista", "favela", "mundo", "brasil", "orientação", "homem", "mulher", "criança", "briga", "segurança", "insegurança", "país", "paz", "jesus", "Deus", "igreja", "remédio", "medicina", "médico", "tiro", "troca", "internet", "Trump", "estados unidos", "guerra", "time", "club", "curso", "casal", "jornal", "rádio", "cidade", "capital", "morte", "trânsito", "intervenção", "campeão", "brasileiro", "bonito", "feio", "lindo", "bonita", "linda", "feia", "magro", "gordo", "magra", "gorda", "presidente", "ex", "guarda", "prefeito", "municipal", "recurso", "ministério", "público", "eleição", "dinheiro", "feliz", "felicidade", "professor", "aluno", "estudante", "apeaça", "manhã", "tarde", "noite", "hoje", "música", "ruin", "jornal", "cego", "deficiente", "poder", "instituto", "greve", "paraliza", "sindicato", "terror", "grupo", "revólver", "tráfico", "droga"]
+    palavrasChaves=["política", "político", "futebol", "assalto", "assassino", "ladrão", "violência", "mata", "medo", "crime", "notícia", "noticiário", "operação", "policial", "assédio", "pânico", "roubo", "copa", "famoso", "artista", "favela", "mundo", "brasil", "orientação", "homem", "mulher", "criança", "briga", "segurança", "insegurança", "país", "paz", "jesus", "Deus", "igreja", "remédio", "medicina", "médico", "tiro", "troca", "internet", "Trump", "estados unidos", "guerra", "time", "club", "curso", "casal", "jornal", "rádio", "cidade", "capital", "morte", "trânsito", "intervenção", "campeão", "brasileiro", "bonito", "feio", "lindo", "bonita", "linda", "feia", "magro", "gordo", "magra", "gorda", "presidente", "ex", "guarda", "prefeito", "municipal", "recurso", "ministério", "público", "eleição", "dinheiro", "feliz", "felicidade", "professor", "aluno", "estudante", "apeaça", "manhã", "tarde", "noite", "hoje", "música", "ruin", "jornal", "cego", "deficiente", "poder", "instituto", "greve", "paraliza", "sindicato", "terror", "grupo", "revólver", "tráfico", "droga", "a", "e", "i", "o", "u", "compra", "energia", "trabalha", "trabalho", "coleção", "problema", "péssimo", "coragem"]
     
     # escolhe uma palavra da lista para buscar no twitter
     palavra=escolherPalavraDalista(palavrasChaves)
@@ -36,7 +36,7 @@ def main():
     
     #ler a base de tweets classificados
     df=lerCSV(nomeArquivo)
-
+    
     #faz a conexão com o twitter
     conexao=conectarTwitter()
     
@@ -52,33 +52,41 @@ def main():
         
         #cria um dataframe com o novo tweet ainda não classificado
         dataframe =criarDF(tweet)
-
+        
         #trata o texto do tweet
         texto=etl(dataframe['texto'])
         
         #remove a coluna usuário do dataframe classificado
         dft=removerColuna(df)
         
-        #trata os textos
+        #trata os textos dos tweets
         dft['texto']=etl(dft['texto'])
         
-        #classificar nova instância de tweet com três algoritmos
-        c1=classificarDecisionTree(dft['texto'], dft['sentimento'], texto)
-        c2=classificarSVM(dft['texto'], dft['sentimento'], texto)
-        c3=classificarMultinomialNB(dft['texto'], dft['sentimento'], texto)
-        c4 = classificarRandomForestClassifier(dft['texto'], dft['sentimento'], texto)
-        c5 = classificarLogisticRegression(dft['texto'], dft['sentimento'], texto)
-        
-        #escolhe a melhor de 5 classificações
-        classificacao=escolherMelhorClassificacao(c1, c2, c3, c4, c5)
-        
-        #preenche a coluna sentimento do dataframe criado com a classificação encontrada
-        dataframe['sentimento']=classificacao
-        
-        #concatena o dataframe do arquivo de treino com o novo dataframe classificado
-        dfNovo=adicionarItem(df, dataframe)
-        #cria e sobrescreve a base de tweets classificados com o novo texto também classificado
-        criarArquivo(dfNovo, nomeArquivo)
+        #classificar nova instância de tweet com cinco algoritmos
+        try:
+            c1=classificarDecisionTree(dft['texto'], dft['sentimento'], texto)
+            c2=classificarSVM(dft['texto'], dft['sentimento'], texto)
+            c3=classificarMultinomialNB(dft['texto'], dft['sentimento'], texto)
+            c4 = classificarRandomForestClassifier(dft['texto'], dft['sentimento'], texto)
+            c5 = classificarLogisticRegression(dft['texto'], dft['sentimento'], texto)
+            
+            #escolhe a melhor de 5 classificações
+            classificacao=escolherMelhorClassificacao(c1, c2, c3, c4, c5)
+            
+            #preenche a coluna sentimento do dataframe criado com a classificação encontrada
+            dataframe['sentimento']=classificacao
+            
+            #concatena o dataframe do arquivo de treino com o novo dataframe classificado
+            dfNovo=adicionarItem(df, dataframe)
+            
+            # verifica se o novo tweet é duplicado e remove-o caso seja
+            dfNovo=removerDuplicadas(dfNovo)
+            
+            #cria e sobrescreve a base de tweets classificados com o novo texto também classificado
+            #criarArquivo(dfNovo, nomeArquivo)
+            
+        except:
+            main()
 
 def lerCSV(nomeArquivo):
     return pd.read_csv(nomeArquivo+".csv", encoding='ISO-8859-1', sep=";", header=0)
@@ -163,27 +171,23 @@ def etl(textos):
     return tweets
 
 def calcularPercentualTotal(df):
-    numero_seguros = len(df.loc[df['sentimento'] == "seguro"])
     numero_inseguros= len(df.loc[df['sentimento'] == 'inseguro'])
-    numero_neutros = len(df.loc[df['sentimento'] == 'neutro'])
+    numero_outros = len(df.loc[df['sentimento'] == 'outro'])
     
     percentuais=[]
    
-    percentuais.append("{:2.2f}".format(numero_seguros/(numero_inseguros+numero_seguros+numero_neutros)*100))
-    percentuais.append("{:2.2f}".format(numero_inseguros/(numero_inseguros+numero_seguros+numero_neutros)*100))
+    percentuais.append("{:2.2f}".format(numero_inseguros/(numero_inseguros+numero_outros)*100))
     
-    percentuais.append("{:2.2f}".format(numero_neutros/(numero_inseguros+numero_seguros+numero_neutros)*100))
+    percentuais.append("{:2.2f}".format(numero_outros/(numero_inseguros+numero_outros)*100))
     return percentuais
 
 def calcularClasses(df):
-    numero_seguros = len(df.loc[df['sentimento'] == 'seguro'])
     numero_inseguros= len(df.loc[df['sentimento'] == 'inseguro'])
-    numero_neutros = len(df.loc[df['sentimento'] == 'neutro'])
+    numero_outros = len(df.loc[df['sentimento'] == 'outro'])
     
     quantidade=[]
-    quantidade.append("{}".format(numero_seguros))
     quantidade.append("{}".format(numero_inseguros))
-    quantidade.append("{}".format(numero_neutros))
+    quantidade.append("{}".format(numero_outros))
     
     return quantidade
 
@@ -200,7 +204,7 @@ def classificarDecisionTree(textos, sentimento, texto):
     modelo = tree.DecisionTreeClassifier()
     
     #treina o modelo passando a frequência de palavras de treino e o valor da coluna sentimento
-    modelo.fit(textos_freq, sentimento)
+    modelo=modelo.fit(textos_freq, sentimento)
     
     #pega a frequência das palavras
     texto_freq=vetor.transform(texto)
@@ -309,10 +313,10 @@ def criarVetor1Palavra():
     return CountVectorizer(analyzer="word")
     
 def conectarTwitter():
-    consumer_key=""
-    consumer_secret = ""
-    access_token = ""
-    access_token_secret = ""
+    consumer_key='2mDuJh76ceIXYQ76BnrQ2YC2Y'
+    consumer_secret = 'yuSnuZoGDmj0DvTDuia6vz992jhfATnJ8OQ6UMbNXBuLK1wknS'
+    access_token = '901839813392945152-2euiWPzJJB1SBjULYzA4b6p8D3OsvRA'
+    access_token_secret = 'ZRbjml2L2J8KSRavCFGcycTgBfx5nPOpNktv3JCKSFOzL'
     
     conectado= Twython(consumer_key, consumer_secret, access_token, access_token_secret)
     return conectado
@@ -341,50 +345,27 @@ def criarArquivo(df, nome):
     return criado
 
 def escolherMelhorClassificacao(c1, c2, c3, c4, c5):
-    
-    classe="neutro"
-    
-    #inicializa os contadores da quantidade de classes para inseguros e seguros
     inseguro=0
-    seguro=0
     
     if (c1=="inseguro"):
         inseguro=inseguro+1
         
-    if (c1=="seguro"):
-        seguro=seguro+1
-        
     if (c2=="inseguro"):
         inseguro=inseguro+1
-        
-    if (c2=="seguro"):
-        seguro=seguro+1
         
     if (c3=="inseguro"):
         inseguro=inseguro+1
         
-    if (c3=="seguro"):
-        seguro=seguro+1
-        
     if (c4=="inseguro"):
         inseguro=inseguro+1
-        
-    if (c4=="seguro"):
-        seguro=seguro+1
         
     if (c5=="inseguro"):
         inseguro=inseguro+1
         
-    if (c5=="seguro"):
-        seguro=seguro+1
-        
     if (inseguro>2):
-        classe="inseguro"
-        
-    if (seguro>2):
-        classe="seguro"
-        
-    return classe
+        return "inseguro"
+    
+    return "outro"
 
 # função para pegar o dataframe criado depois da classificação do tweet encontrado
 def getDataFrame():
@@ -401,3 +382,7 @@ def escolherPalavraDalista(palavrasChaves):
     # retorna a palavra escolhida da lista
     return palavrasChaves[posicao]
 
+def removerDuplicadas(df):
+    return df.drop_duplicates(['texto'])
+
+main()
