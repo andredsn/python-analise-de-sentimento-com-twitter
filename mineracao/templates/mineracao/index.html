@@ -11,7 +11,7 @@ google.setOnLoadCallback(drawChart);
 
 function drawChart() {
 
-var data = google.visualization.arrayToDataTable([['CLASSE', 'PERCENTUAL', 'QUANTIDADE'], ['SEGURO',{{percentualSeguros}},{{totalSeguros}}], ["INSEGURO", {{percentualInseguros}}, {{totalInseguros}}], ["NEUTRO", {{percentualNeutros}}, {{totalNeutros}}]]);
+var data = google.visualization.arrayToDataTable([['CLASSE', 'PERCENTUAL', 'QUANTIDADE'], ['INSEGURO', {{percentualInseguros}}, {{totalInseguros}}], ["OUTRO", {{percentualOutros}}, {{totalOutros}}]]);
 
 var options = {
 title: {{total}} + ' TWEETS CLASSIFICADOS', hAxis: {title: 'MONITORAMENTO DE TWEETS SOBRE SEGURANÇA PÚBLICA NO BRASIL', titleTextStyle: {color: 'red'}}};
