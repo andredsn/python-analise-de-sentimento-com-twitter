@@ -42,6 +42,12 @@ A cada 20 segundo, um tweet é buscado, classificado e a página é renderizada 
 
 O resultado dos experimentos com os algoritmos estão na pasta experimentos.
 
+O resultado da avaliação dos algoritmos está no arquivo através do jupyternotebook analise-de-sentimento.ipynb
+
+Vá para a pasta experimento no prompt ou shell e digite jupyternotebook. Abrirá o browser padrão do computador. Clique no arquivo analise-de-sentimento.ipynb para conferir o código fonte e os resultados dos algoritmos. Atenção, para utilizar o jupyternotebook é necessário ter instalado o anaconda ou python.
+
+Leia mais sobre jupyternotebook em jupyter.org/
+
 Leia mais sobre google chart em:
 https://developers.google.com/chart/
 https://developers.google.com/chart/interactive/docs/gallery
