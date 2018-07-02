@@ -3,9 +3,11 @@
 Esse projeto faz análise de sentimento de tweets sobre segurança pública no Brasil utilizando framework python django através da técnica de classificação.
 O django é um framework para desenvolvimento de aplicações web para a linguagem python.
 
-A base desse projeto é a utilização da inteligência artificial através da técnica de classificação, utilizando 5 algoritmos: RandomForestClassifier, LogisticRegression, decision tree, SVM e Naive Bayes (utilizando a classe MultinomialNB) para a análise de sentimento dos usuário sobre a segurança pública no Brasil.
+A base desse projeto é a utilização da inteligência artificial através da técnica de classificação, utilizando 5 algoritmos: RandomForestClassifier, LogisticRegression, decision tree, SVM e Naive Bayes (MultinomialNB) para a análise de sentimento dos usuário sobre a segurança pública no Brasil, classificando os tweets em inseguro ou outro.
 
-Os cinco algoritmos classificam um tweet, mas o tweet é inserido em apenas uma classe. Por isso, é verificado o resultado de cada algoritmo, sendo escolhida a melhor de cinto. Por exemplo: se os algoritmos classificarem um texto do tweet respectivamente como: neutro, neutro, inseguro, neutro e seguro, prevalecerá a classificação neutro.
+Os cinco algoritmos classificam um tweet, mas o tweet é inserido em apenas uma classe. Por isso, é verificado o resultado de cada algoritmo, sendo escolhida a melhor de cinto.
+
+Por exemplo: se os algoritmos classificarem um texto do tweet respectivamente como: outro, outro, inseguro, outro e inseguro, prevalecerá a classificação outro.
 
 A cada novo tweet classificado, o browser é renderizado, exibindo o último tweet classificado e um gráfico com google chart mostrando o percentual e o total de tweets em cada classe, além do total de tweets no dataset.
 
@@ -24,7 +26,7 @@ https://repo.continuum.io/archive/
 
 Os pacotes necessários estão no arquivo require.txt que devem ser instalados após a instalação do anaconda.
 Para instalar os pacotes do arquivo texto referido, execute no prompt ou terminal: pip install -r require.txt
-Não esqueça de apontar o caminho absoluto do require.txt caso você não esteja na mesma pasta do require.txt.
+Não esqueça de apontar o caminho absoluto do require.txt caso você não esteja na mesma pasta do arquivo.
 
 Após a instalação do require.txt, execute no console python:
 import nltk
