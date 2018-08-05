@@ -7,7 +7,6 @@ def index(request):
     
     main()
     df =getDataFrame()
-    df=df.head(3000)
     percentuais=calcularPercentualTotal(df)
     totais=calcularClasses(df)
     total=len(df)
