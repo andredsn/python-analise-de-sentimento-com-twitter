@@ -1,15 +1,11 @@
 ﻿# coding = UTF-8
 
-Esse projeto faz análise de sentimento de tweets sobre segurança pública no Brasil utilizando framework python django através da técnica de classificação.
+Este projeto faz análise de sentimento de tweets sobre o derramamento de óleo nas praias do Brasil utilizando framework python django através da técnica de classificação.
 O django é um framework para desenvolvimento de aplicações web para a linguagem python.
 
-A base desse projeto é a utilização da inteligência artificial através da técnica de classificação, utilizando 5 algoritmos: RandomForestClassifier, LogisticRegression, decision tree, SVM e Naive Bayes (MultinomialNB) para a análise de sentimento dos usuário sobre a segurança pública no Brasil, classificando os tweets em inseguro ou outro.
+A base desse projeto é a utilização da inteligência artificial através da técnica de classificação, utilizando o algoritmo Naive Bayes para a mineração da opinião dos usuário sobre a mancha de óleo nas praias brasileiras, classificando os tweets em crítica ou outros.
 
-Os cinco algoritmos classificam um tweet, mas o tweet é inserido em apenas uma classe. Por isso, é verificado o resultado de cada algoritmo, sendo escolhida a melhor de cinto.
-
-Por exemplo: se os algoritmos classificarem um texto do tweet respectivamente como: outro, outro, inseguro, outro e inseguro, prevalecerá a classificação outro.
-
-A cada novo tweet classificado, o browser é renderizado, exibindo o último tweet classificado e um gráfico com google chart mostrando o percentual e o total de tweets em cada classe, além do total de tweets no dataset.
+A cada novo tweet classificado, o browser é renderizado, exibindo o último tweet classificado e um gráfico com google chart mostrando o percentual de tweets em cada classe, além do total de tweets no dataset.
 
 Para usar a api do twitter, é necessário estar logado  e criar um app na própria rede social, o qual contém as credenciais que permitem acessar os dados, através do link:
 https://apps.twitter.com/app/new
@@ -32,6 +28,9 @@ Após a instalação do require.txt, execute no console python:
 import nltk
 nltk.download()
 Quando abrir a janela de download dos plugins do nltk, escolha all para evitar problemas com módulos não encontrados.
+ou digite num terminal ou prompt:
+python -m nltk.downloader all
+O comando acima baixa diretamente sem precisar da interface gráfica do nltk.
 
 Utilize o terminal ou prompt para ir para a raiz do projeto (python-analise-de-sentimento-com-twitter). Digite:
 python manage.py runserver e tecle enter.

@@ -1,5 +1,6 @@
 ﻿# coding=UTF-8
 
+import os
 import re
 from unicodedata import normalize
 
@@ -20,19 +21,18 @@ conexao=None
 dfNovo=None
 
 def main():
-    
     # pega as variáveis globais necessárias
     global conexao
     global dfNovo
     
     #palavras chaves para buscar no twitter
-    palavrasChaves=["política", "político", "futebol", "assalto", "assassino", "ladrão", "violência", "mata", "medo", "crime", "notícia", "noticiário", "operação", "policial", "assédio", "pânico", "roubo", "copa", "famoso", "artista", "favela", "mundo", "brasil", "orientação", "homem", "mulher", "criança", "briga", "segurança", "insegurança", "país", "paz", "jesus", "Deus", "igreja", "remédio", "medicina", "médico", "tiro", "troca", "internet", "Trump", "estados unidos", "guerra", "time", "club", "curso", "casal", "jornal", "rádio", "cidade", "capital", "morte", "trânsito", "intervenção", "campeão", "brasileiro", "bonito", "feio", "lindo", "bonita", "linda", "feia", "magro", "gordo", "magra", "gorda", "presidente", "ex", "guarda", "prefeito", "municipal", "recurso", "ministério", "público", "eleição", "dinheiro", "feliz", "felicidade", "professor", "aluno", "estudante", "apeaça", "manhã", "tarde", "noite", "hoje", "música", "ruin", "jornal", "cego", "deficiente", "poder", "instituto", "greve", "paraliza", "sindicato", "terror", "grupo", "revólver", "tráfico", "droga", "a", "e", "i", "o", "u", "compra", "energia", "trabalha", "trabalho", "coleção", "problema", "péssimo", "coragem"]
+    palavrasChaves=["política", "político", "futebol", "assalto", "assassino", "ladrão", "violência", "mata", "medo", "crime", "notícia", "noticiário", "operação", "policial", "assédio", "pânico", "roubo", "copa", "famoso", "artista", "favela", "mundo", "brasil", "orientação", "homem", "mulher", "criança", "briga", "segurança", "insegurança", "país", "paz", "jesus", "Deus", "igreja", "remédio", "medicina", "médico", "tiro", "troca", "internet", "Trump", "estados unidos", "guerra", "time", "club", "curso", "casal", "jornal", "rádio", "cidade", "capital", "morte", "trânsito", "intervenção", "campeão", "brasileiro", "bonito", "feio", "lindo", "bonita", "linda", "feia", "magro", "gordo", "magra", "gorda", "presidente", "ex", "guarda", "prefeito", "municipal", "recurso", "ministério", "público", "eleição", "dinheiro", "feliz", "felicidade", "professor", "aluno", "estudante", "ameaça", "manhã", "tarde", "noite", "hoje", "música", "ruin", "jornal", "cego", "deficiente", "poder", "instituto", "greve", "paraliza", "sindicato", "terror", "grupo", "revólver", "tráfico", "droga", "a", "e", "i", "o", "u", "compra", "energia", "trabalha", "trabalho", "coleção", "problema", "péssimo", "coragem", "óleo", "petróleo", "contaminação", "praia", "governo", "bolsonaro", "ministro", "poluição", "pesca", "venezuela", "voluntário", "mancha", "desastre", "ambiente", "ambiental", "peixe", "nordeste", "culpa", "culpado", "competência", "incompetência", "derrubar", "justiça", "mentira", "mentiroso"]
     
     # escolhe uma palavra da lista para buscar no twitter
     palavra=escolherPalavraDalista(palavrasChaves)
     
     #base de tweets classificados
-    nomeArquivo="tweets_classificados"
+    nomeArquivo="tweets_classificados.csv"
     
     #ler a base de tweets classificados
     df=lerCSV(nomeArquivo)
@@ -44,14 +44,11 @@ def main():
     tweetEncontrado=buscar(palavra)
     
     #ccontinua o processo de classificação se for encontrado tweet
-    
+    tweetEncontrado=True
     if (tweetEncontrado):
         
         #percorre o json de tweet encontrado para pegar usuário, texto e id
         tweet=adicionarNaLista(tweetEncontrado)
-        
-        #cria um dataframe com o novo tweet ainda não classificado
-        dataframe =criarDF(tweet)
         
         #trata o texto do tweet
         texto=etl(dataframe['texto'])
@@ -62,22 +59,17 @@ def main():
         #trata os textos dos tweets
         dft['texto']=etl(dft['texto'])
         
-        #classificar nova instância de tweet com cinco algoritmos
+        #classificar nova instância de tweet
         try:
-            c1=classificarDecisionTree(dft['texto'], dft['sentimento'], texto)
-            c2=classificarSVM(dft['texto'], dft['sentimento'], texto)
-            c3=classificarMultinomialNB(dft['texto'], dft['sentimento'], texto)
-            c4 = classificarRandomForestClassifier(dft['texto'], dft['sentimento'], texto)
-            c5 = classificarLogisticRegression(dft['texto'], dft['sentimento'], texto)
-            
-            #escolhe a melhor de 5 classificações
-            classificacao=escolherMelhorClassificacao(c1, c2, c3, c4, c5)
+            classificacao=classificarMultinomialNB(dft['texto'], dft['sentimento'], texto)
             
             #preenche a coluna sentimento do dataframe criado com a classificação encontrada
             dataframe['sentimento']=classificacao
             
             #concatena o dataframe do arquivo de treino com o novo dataframe classificado
+            dfNovo=df
             dfNovo=adicionarItem(df, dataframe)
+            c=calcularPercentualTotal(df)
             
             # verifica se o novo tweet é duplicado e remove-o caso seja
             dfNovo=removerDuplicadas(dfNovo)
@@ -89,10 +81,10 @@ def main():
             main()
 
 def lerCSV(nomeArquivo):
-    return pd.read_csv(nomeArquivo+".csv", encoding='ISO-8859-1', sep=";", header=0)
+    return pd.read_csv(nomeArquivo, encoding='ISO-8859-1', sep=";", header=0)
 
 def removerPontuacao(texto):
-    return re.sub(u'[^a-zA-Z0-9áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛàèìòùÀÈÌÒÙãõ]+', ' ', texto)
+    return re.sub(u'[^a-zA-Z0-9áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛàèìòùÀÈÌÒÙãõÇç ]', '', texto)
 
 def removerStopWord(texto):
     stopWord=nltk.corpus.stopwords.words('portuguese')
@@ -139,7 +131,6 @@ def etl(textos):
     
     #trata o texto de cada linha do dataframe
     for texto in textos:
-        texto=str(texto)
         
         #remover mensionamento (@usuario)
         texto=removerMensionamento(texto)
@@ -156,86 +147,41 @@ def etl(textos):
         #remove números
         texto=removerNumeros(texto)
         
-        #retirar assentos
-        texto=removerAssentuacao(texto)
+        #remove stopwords
+        texto=removerStopWord(texto)
         
         #aplica stemming
         texto=aplicarStemming(texto)
         
-        #remove stopwords
-        texto=removerStopWord(texto)
-        
-        texto=str(texto)
+        #retirar assentos
+        texto=removerAssentuacao(texto)
         
         tweets.append(texto)
     return tweets
 
-def calcularPercentualTotal(df):
-    numero_inseguros= len(df.loc[df['sentimento'] == 'inseguro'])
-    numero_outros = len(df.loc[df['sentimento'] == 'outro'])
-    
-    percentuais=[]
-   
-    percentuais.append("{:2.2f}".format(numero_inseguros/(numero_inseguros+numero_outros)*100))
-    
-    percentuais.append("{:2.2f}".format(numero_outros/(numero_inseguros+numero_outros)*100))
-    return percentuais
-
 def calcularClasses(df):
-    numero_inseguros= len(df.loc[df['sentimento'] == 'inseguro'])
-    numero_outros = len(df.loc[df['sentimento'] == 'outro'])
+    numero_apoios = len(df.loc[df['sentimento'] == 'apoio'])
+    numero_criticas= len(df.loc[df['sentimento'] == 'crítica'])
+    numero_outros = len(df.loc[df['sentimento'] == 'outros'])
     
     quantidade=[]
-    quantidade.append("{}".format(numero_inseguros))
+    quantidade.append("{}".format(numero_apoios))
+    quantidade.append("{}".format(numero_criticas))
     quantidade.append("{}".format(numero_outros))
     
     return quantidade
 
-def classificarDecisionTree(textos, sentimento, texto):
-    #classificação com algoritmo tree
+def calcularPercentualTotal(df):
+    #numero_apoios = len(df.loc[df['sentimento'] == 'apoio'])
+    numero_criticas= len(df.loc[df['sentimento'] == 'crítica'])
+    numero_outros = len(df.loc[df['sentimento'] == 'outros'])
     
-    #cria um vetor de 1 palavra
-    vetor=criarVetor1Palavra()
+    percentuais=[]
     
-    #pega a frequência das palavras
-    textos_freq=vetor.fit_transform(textos)
-    
-    #cria o modelo
-    modelo = tree.DecisionTreeClassifier()
-    
-    #treina o modelo passando a frequência de palavras de treino e o valor da coluna sentimento
-    modelo=modelo.fit(textos_freq, sentimento)
-    
-    #pega a frequência das palavras
-    texto_freq=vetor.transform(texto)
-    
-    #previsão do modelo
-    previsao=modelo.predict(texto_freq)
-    return previsao
-
-def classificarSVM(textos, sentimento, texto):
-    
-    #classificação com svm
-    
-    #cria um vetor de 1 palavra
-    vetor = criarVetor1Palavra()
-    
-    #pega a frequência das palavras
-    textos_freq = vetor.fit_transform(textos)
-    
-    #cria o modelo
-    modelo = svm.SVC(gamma=0.001, C=100.)
-    
-    #treina o modelo passando a frequência de palavras de treino e o valor da coluna sentimento
-    modelo.fit(textos_freq, sentimento)
-    
-    #pega a frequência das palavras
-    texto_freq = vetor.transform(texto)
-    
-    #previsão do modelo
-    previsao = modelo.predict(texto_freq)
-    
-    return previsao
+    #percentuais.append("{:2.2f}".format(numero_apoios/(numero_criticas+numero_apoios+numero_outros)*100))
+    percentuais.append("{:2.2f}".format(numero_criticas/(numero_criticas+numero_outros)*100))
+    percentuais.append("{:2.2f}".format(numero_outros/(numero_criticas+numero_outros)*100))
+    return percentuais
 
 def classificarMultinomialNB(textos, sentimento, texto):
     
@@ -258,53 +204,6 @@ def classificarMultinomialNB(textos, sentimento, texto):
     
     #previsão do modelo
     previsao=modelo.predict(texto_freq)
-    
-    return previsao
-
-def classificarRandomForestClassifier(textos, sentimento, texto):
-    
-    #classificação com floresta aleatória
-    
-    #cria um vetor de 1 palavra
-    vetor=criarVetor1Palavra()
-    
-    #pega a frequência das palavras
-    textos_freq=vetor.fit_transform(textos)
-    
-    #pega a frequência das palavras
-    texto_freq=vetor.transform(texto)
-    
-    #cria o modelo
-    modelo = RandomForestClassifier(random_state = 42)
-    
-    #treina o modelo passando a frequência de palavras de treino e o valor da coluna sentimento
-    modelo.fit(textos_freq, sentimento.ravel())
-    
-    #previsão do modelo
-    previsao= modelo.predict(texto_freq)
-    
-    return previsao
-
-def classificarLogisticRegression(textos, sentimento, texto):
-    #Regressão Logística
-    
-        #cria um vetor de 1 palavra
-    vetor = criarVetor1Palavra()
-    
-    #pega a frequência das palavras
-    textos_freq = vetor.fit_transform(textos)
-    
-    #cria o modelo
-    modelo=LogisticRegression()
-    
-    #treina o modelo passando a frequência de palavras de treino e o valor da coluna sentimento
-    modelo.fit(textos_freq, sentimento)
-    
-    #pega a frequência das palavras
-    texto_freq = vetor.transform(texto)
-    
-    #previsão do modelo
-    previsao= modelo.predict(texto_freq)
     
     return previsao
 
@@ -340,31 +239,31 @@ def adicionarItem(df, item):
     return df.append(item, ignore_index=True)
 
 def criarArquivo(df, nome):
-    criado=df.to_csv(nome+'.csv', sep=";", index=False)
+    criado=df.to_csv(nome, sep=";", index=False)
     return criado
 
 def escolherMelhorClassificacao(c1, c2, c3, c4, c5):
-    inseguro=0
+    critica=0
     
-    if (c1=="inseguro"):
-        inseguro=inseguro+1
+    if (c1=="crítica"):
+        critica=critica+1
         
-    if (c2=="inseguro"):
-        inseguro=inseguro+1
+    if (c2=="crítica"):
+        critica=critica+1
         
-    if (c3=="inseguro"):
-        inseguro=inseguro+1
+    if (c3=="crítica"):
+        critica=critica+1
         
-    if (c4=="inseguro"):
-        inseguro=inseguro+1
+    if (c4=="crítica"):
+        critica=critica+1
         
-    if (c5=="inseguro"):
-        inseguro=inseguro+1
+    if (c5=="crítica"):
+        critica=critica+1
         
-    if (inseguro>2):
-        return "inseguro"
+    if (critica>2):
+        return "crítica"
     
-    return "outro"
+    return "outros"
 
 # função para pegar o dataframe criado depois da classificação do tweet encontrado
 def getDataFrame():
@@ -383,4 +282,5 @@ def escolherPalavraDalista(palavrasChaves):
 
 def removerDuplicadas(df):
     return df.drop_duplicates(['texto'])
+
 
